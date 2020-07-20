@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 
 	flags "github.com/jessevdk/go-flags"
-	"github.com/smartatransit/healthcheck/pkg/config"
+	"github.com/smartatransit/healthcheck/pkg/health"
 	"go.uber.org/zap"
 )
 
@@ -32,10 +35,23 @@ func main() {
 		_ = logger.Sync() // flushes buffer, if any
 	}()
 
-	cfg, err := config.NewConfig(opts.ConfigPath)
+	cfg, err := health.NewConfig(opts.ConfigPath)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
 
-	logger.Info(fmt.Sprintf("%+v", cfg))
+	cc := health.NewCheckClient(cfg, logger)
+	ctx, cancelFunc := context.WithCancel(context.Background())
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+
+	cc.Start(ctx)
+
+	select {
+	case <-quit:
+		cancelFunc()
+		logger.Info("interrupt signal received")
+		logger.Info("shutting down...")
+	}
 }
