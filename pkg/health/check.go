@@ -27,8 +27,7 @@ func (c CheckClient) runChecks(ctx context.Context) {
 		b, err := check.Check(ctx)
 		if err != nil {
 			c.logger.Error(err.Error())
-		}
-		if !b {
+		} else if !b {
 			c.logger.Error(check.ErrorMessage())
 		}
 	}
