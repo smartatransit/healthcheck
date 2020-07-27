@@ -2,8 +2,6 @@ package health
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 	"time"
 
 	"go.uber.org/zap"
@@ -22,29 +20,6 @@ type Check interface {
 
 func NewCheckClient(c Config, logger *zap.Logger) *CheckClient {
 	return &CheckClient{config: c, logger: logger}
-}
-
-type EndpointCheck struct {
-	endpoint string
-	enabled  bool
-	name     string
-	err      string
-}
-
-func (e *EndpointCheck) Check(ctx context.Context) (bool, error) {
-	resp, err := http.Get(e.endpoint)
-	if err != nil {
-		return false, err
-	}
-	if resp.Status == "200" {
-		return true, err
-	}
-	e.err = fmt.Sprintf("Service %s returned status code %s at endpoint %s", e.name, resp.Status, e.endpoint)
-	return false, err
-}
-
-func (e *EndpointCheck) ErrorMessage() string {
-	return e.err
 }
 
 func (c CheckClient) runChecks(ctx context.Context) {
