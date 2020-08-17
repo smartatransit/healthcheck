@@ -14,6 +14,7 @@ type Response struct {
 		Service  string      `json:"service"`
 		Name     string      `json:"name"`
 		Metadata interface{} `json:"metadata"`
+		Healthy  bool        `json:"healthy"`
 	} `json:"statuses"`
 }
 
@@ -31,7 +32,9 @@ func (e *EndpointCheck) validateResp(resp Response) bool {
 	var str strings.Builder
 	str.WriteString(fmt.Sprintf("Service %s has reported the following subservices are in a degraded state: ", e.name))
 	for _, status := range resp.Statuses {
-		str.WriteString(fmt.Sprintf("Service %s, Name %s, Metadata %v;", status.Service, status.Name, status.Metadata))
+		if !status.Healthy {
+			str.WriteString(fmt.Sprintf("Service %s, Name %s, Metadata %v;", status.Service, status.Name, status.Metadata))
+		}
 	}
 	e.err = str.String()
 	return false
