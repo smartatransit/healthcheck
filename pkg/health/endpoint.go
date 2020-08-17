@@ -63,3 +63,7 @@ func (e *EndpointCheck) Check(ctx context.Context) (bool, error) {
 func (e *EndpointCheck) ErrorMessage() string {
 	return e.err
 }
+
+func (e *EndpointCheck) Enabled() bool {
+	return e.enabled
+}

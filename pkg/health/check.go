@@ -16,6 +16,7 @@ type CheckClient struct {
 type Check interface {
 	Check(context.Context) (bool, error)
 	ErrorMessage() string
+	Enabled() bool
 }
 
 func NewCheckClient(c Config, logger *zap.Logger) *CheckClient {
@@ -24,11 +25,13 @@ func NewCheckClient(c Config, logger *zap.Logger) *CheckClient {
 
 func (c CheckClient) runChecks(ctx context.Context) {
 	for _, check := range c.checks {
-		b, err := check.Check(ctx)
-		if err != nil {
-			c.logger.Error(err.Error())
-		} else if !b {
-			c.logger.Error(check.ErrorMessage())
+		if check.Enabled() {
+			b, err := check.Check(ctx)
+			if err != nil {
+				c.logger.Error(err.Error())
+			} else if !b {
+				c.logger.Error(check.ErrorMessage())
+			}
 		}
 	}
 }
