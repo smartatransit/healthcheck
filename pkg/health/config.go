@@ -1,4 +1,4 @@
-package config
+package health
 
 import (
 	"os"
@@ -12,7 +12,7 @@ type Config struct {
 		PollTimeSeconds int `yaml:"poll_time_seconds"`
 		TimeoutSeconds  int `yaml:"timeout_seconds"`
 	} `yaml:"options"`
-	Services struct {
+	Services []struct {
 		Name     string `yaml:"name"`
 		Endpoint string `yaml:"endpoint"`
 		Enabled  bool   `yaml:"enabled"`
