@@ -48,10 +48,8 @@ func main() {
 
 	cc.Start(ctx)
 
-	select {
-	case <-quit:
-		cancelFunc()
-		logger.Info("interrupt signal received")
-		logger.Info("shutting down...")
-	}
+	<-quit
+	cancelFunc()
+	logger.Info("interrupt signal received")
+	logger.Info("shutting down...")
 }

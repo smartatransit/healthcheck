@@ -24,7 +24,7 @@ script:
   - docker login -u $DOCKER_USER -p $DOCKER_PASS
   - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo "staging" ; fi`
 
-  - export docker_repo=smartatransit/feedback
+  - export docker_repo=smartatransit/healthcheck
   - export docker_build_directory=.
   - export tags="build-${TRAVIS_BUILD_NUMBER},commit-${TRAVIS_COMMIT::8},$TAG"
   - ./build_and_push_image.sh
