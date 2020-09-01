@@ -2,6 +2,6 @@ options:
   poll_time_seconds: 60
   timeout_seconds: 5
 services:
-  -  name: third-rail
-     endpoint: https://third-rail-insecure.services.smartatransit.com/health
+  -  name: feedback
+     endpoint: https://feedback.services.smartatransit.com/v1/health
      enabled: true

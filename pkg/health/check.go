@@ -2,8 +2,10 @@ package health
 
 import (
 	"context"
+	"net/http"
 	"time"
 
+	"github.com/smartatransit/healthcheck/pkg/auth"
 	"go.uber.org/zap"
 )
 
@@ -37,9 +39,10 @@ func (c CheckClient) runChecks(ctx context.Context) {
 }
 
 func (c CheckClient) buildChecks() []Check {
+	client := auth.NewClient(&http.Client{}, c.logger)
 	var checks []Check
 	for _, service := range c.config.Services {
-		checks = append(checks, &EndpointCheck{service.Endpoint, service.Enabled, service.Name, ""})
+		checks = append(checks, &EndpointCheck{service.Endpoint, service.Enabled, service.Name, "", client})
 	}
 	return checks
 }
