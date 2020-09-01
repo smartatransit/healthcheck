@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+type HTTPClient interface {
+	Get(url string) (resp *http.Response, err error)
+}
+
 type Response struct {
 	Statuses []struct {
 		Service  string      `json:"service"`
@@ -23,25 +27,28 @@ type EndpointCheck struct {
 	enabled  bool
 	name     string
 	err      string
+	client   HTTPClient
 }
 
 func (e *EndpointCheck) validateResp(resp Response) bool {
-	if len(resp.Statuses) == 0 {
-		return true
-	}
+	var unhealthy bool
 	var str strings.Builder
 	str.WriteString(fmt.Sprintf("Service %s has reported the following subservices are in a degraded state: ", e.name))
 	for _, status := range resp.Statuses {
 		if !status.Healthy {
+			unhealthy = true
 			str.WriteString(fmt.Sprintf("Service %s, Name %s, Metadata %v;", status.Service, status.Name, status.Metadata))
 		}
 	}
-	e.err = str.String()
-	return false
+	if unhealthy {
+		e.err = str.String()
+		return false
+	}
+	return true
 }
 
 func (e *EndpointCheck) Check(ctx context.Context) (bool, error) {
-	r, err := http.Get(e.endpoint)
+	r, err := e.client.Get(e.endpoint)
 	if err != nil {
 		return false, err
 	}

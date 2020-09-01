@@ -3,6 +3,7 @@ FROM golang:1.14 AS builder
 WORKDIR /src
 COPY go.mod go.mod
 COPY go.sum go.sum
+COPY config.yaml config.yaml
 COPY main.go main.go
 COPY pkg/ pkg/
 COPY vendor/ vendor/
