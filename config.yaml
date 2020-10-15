@@ -3,5 +3,5 @@ options:
   timeout_seconds: 5
 services:
   -  name: feedback
-     endpoint: https://feedback.services.smartatransit.com/v1/health
+     endpoint: http://feedback.feedback.svc.cluster.local
      enabled: true
