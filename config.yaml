@@ -3,5 +3,5 @@ options:
   timeout_seconds: 5
 services:
   -  name: feedback
-     endpoint: http://feedback.feedback.svc.cluster.local
+     endpoint: http://feedback.feedback.svc.cluster.local/v1/health
      enabled: true
